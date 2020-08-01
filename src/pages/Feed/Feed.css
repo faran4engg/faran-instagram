@@ -1,0 +1,23 @@
+.insta-app {
+  display: grid;
+  margin-top: 2.5em;
+  grid-row-gap: 1em;
+  grid-template-areas: 'feed' 'highlight';
+}
+
+.feed-area {
+  grid-area: feed;
+}
+
+.highlight-area {
+  grid-area: highlight;
+}
+
+@media (min-width: 960px) {
+  .insta-app {
+    margin: 2.5em 10em;
+    grid-column-gap: 2em;
+    grid-template-columns: 3fr 1fr;
+    grid-template-areas: 'feed' 'highlight';
+  }
+}
