@@ -46,8 +46,8 @@ export default function Post({ username, caption, imageUrl }) {
               <MoreVertIcon />
             </IconButton>
           }
-          title='Shrimp and Chorizo Paella'
-          subheader='September 14, 2016'
+          title={username}
+          subheader='August 1, 2020'
         />
         <CardMedia className={classes.media} image={imageUrl} />
         <CardContent>
@@ -63,7 +63,7 @@ export default function Post({ username, caption, imageUrl }) {
             </IconButton>
           </CardActions>
           <Typography variant='body2' color='textSecondary' component='p'>
-            {caption}
+            <strong>{username}: </strong> {caption}
           </Typography>
           <br />
           <Typography variant='subtitle2' display='block' gutterBottom>
