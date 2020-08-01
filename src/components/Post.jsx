@@ -4,6 +4,10 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
+import CardActions from '@material-ui/core/CardActions';
+import ModeCommentIcon from '@material-ui/icons/ModeComment';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import SendIcon from '@material-ui/icons/Send';
 
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
@@ -47,6 +51,17 @@ export default function Post({ username, caption, imageUrl }) {
         />
         <CardMedia className={classes.media} image={imageUrl} />
         <CardContent>
+          <CardActions disableSpacing>
+            <IconButton>
+              <FavoriteIcon />
+            </IconButton>
+            <IconButton>
+              <ModeCommentIcon />
+            </IconButton>
+            <IconButton>
+              <SendIcon />
+            </IconButton>
+          </CardActions>
           <Typography variant='body2' color='textSecondary' component='p'>
             {caption}
           </Typography>
