@@ -1,13 +1,15 @@
 import React from 'react';
 import './App.css';
 import TopNav from './components/TopNav';
-import Feed from './pages/Feed/Feed';
+import Home from './pages/Home/Home';
+import BottomNav from './components/BottomNav';
 
 function App() {
   return (
     <div className='App'>
       <TopNav />
-      <Feed />
+      <Home />
+      <BottomNav />
     </div>
   );
 }
