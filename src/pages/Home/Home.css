@@ -15,7 +15,8 @@
 
 @media (min-width: 960px) {
   .insta-app {
-    margin: 2.5em 10em;
+    /* margin: 2.5em 10em; */
+    padding: 0 10em;
     grid-column-gap: 2em;
     grid-template-columns: 2fr 1fr;
     grid-template-areas: 'feed' 'highlight';
