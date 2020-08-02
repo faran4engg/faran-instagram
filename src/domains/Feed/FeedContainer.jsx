@@ -8,7 +8,12 @@ const FeedContainer = ({ children }) => {
     db.collection('posts')
       .orderBy('timestamp', 'desc')
       .onSnapshot((snapshot) => {
-        setPosts(snapshot.docs.map((doc) => doc.data()));
+        setPosts(
+          snapshot.docs.map((doc) => ({
+            id: doc.id,
+            post: doc.data(),
+          }))
+        );
       });
   }, []);
 

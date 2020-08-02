@@ -29,8 +29,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Post({ username, caption, imageUrl, timestamp }) {
+export default function Post({ id, username, caption, imageUrl, timestamp }) {
   const classes = useStyles();
+  console.log({ id });
 
   return (
     <>
