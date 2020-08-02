@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -8,11 +8,22 @@ import Badge from '@material-ui/core/Badge';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import instaLogo from '../assets/insta-logo.png';
+
+import { auth } from '../firebase/firebase-config';
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -47,44 +58,67 @@ const useStyles = makeStyles((theme) => ({
 
 export default function TopNav() {
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const [open, setOpen] = React.useState(false);
+  const [username, setUsername] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [user, setUser] = React.useState(null);
 
-  const isMenuOpen = Boolean(anchorEl);
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((authUser) => {
+      if (authUser) {
+        // user has loggedin
+        console.log({ authUser });
+        setUser(authUser);
+        if (authUser.displayName) {
+          // dont updte username
+        } else {
+          // if we create a new user
+          return authUser.updateProfile({
+            displayName: username,
+          });
+        }
+      } else {
+        // user has logged out
+        setUser(null);
+      }
+    });
 
-  const handleProfileMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
+    return () => {
+      // cleanup
+      unsubscribe();
+    };
+  }, [user, username]);
+
+  const handleClickOpen = () => {
+    setOpen(true);
   };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    handleMobileMenuClose();
   };
 
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
-  const menuId = 'primary-search-account-menu';
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-    </Menu>
-  );
+  const signup = () => {
+    console.log('signup', { username, email, password });
+    auth
+      .createUserWithEmailAndPassword(email, password)
+
+      .catch((error) => {
+        console.error(error.message);
+        alert(error.message);
+      });
+  };
 
   const mobileMenuId = 'primary-search-account-menu-mobile';
   const renderMobileMenu = (
@@ -113,7 +147,7 @@ export default function TopNav() {
         </IconButton>
         <p>Notifications</p>
       </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
+      <MenuItem>
         <IconButton
           aria-label='account of current user'
           aria-controls='primary-search-account-menu'
@@ -122,9 +156,59 @@ export default function TopNav() {
         >
           <AccountCircle />
         </IconButton>
-        <p>Profile</p>
+        <p>Login</p>
       </MenuItem>
     </Menu>
+  );
+
+  const formDialog = (
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      aria-labelledby='form-dialog-title'
+    >
+      <DialogTitle id='form-dialog-title'>Signup</DialogTitle>
+      <DialogContent>
+        <TextField
+          autoFocus
+          margin='dense'
+          id='username'
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          label='Insta User Name of your choice'
+          type='text'
+          fullWidth
+        />
+        <TextField
+          autoFocus
+          margin='dense'
+          id='email'
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          label='Email Address'
+          type='email'
+          fullWidth
+        />
+        <TextField
+          autoFocus
+          margin='dense'
+          id='password'
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          label='Password'
+          type='password'
+          fullWidth
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose} color='primary'>
+          Cancel
+        </Button>
+        <Button onClick={signup} color='primary'>
+          Signup
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 
   return (
@@ -159,16 +243,15 @@ export default function TopNav() {
                 <NotificationsIcon />
               </Badge>
             </IconButton>
-            <IconButton
-              edge='end'
-              aria-label='account of current user'
-              aria-controls={menuId}
-              aria-haspopup='true'
-              onClick={handleProfileMenuOpen}
-              color='inherit'
-            >
-              <AccountCircle />
-            </IconButton>
+            {user ? (
+              <IconButton edge='end' color='inherit' onClick={auth.signOut()}>
+                <ExitToAppIcon />
+              </IconButton>
+            ) : (
+              <IconButton edge='end' color='inherit' onClick={handleClickOpen}>
+                <AccountCircle />
+              </IconButton>
+            )}
           </div>
           <div className={classes.sectionMobile}>
             <IconButton
@@ -184,7 +267,7 @@ export default function TopNav() {
         </Toolbar>
       </AppBar>
       {renderMobileMenu}
-      {renderMenu}
+      {formDialog}
     </div>
   );
 }
