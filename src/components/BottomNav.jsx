@@ -59,17 +59,15 @@ export default function BottomNav() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // TODO: do something with -> this.state.file
-    console.log('handle uploading-', file);
 
     const newPost = storage.ref(`images/${file.name}`).put(file);
     newPost.on(
       'state_changed',
       (snapshot) => {
-        console.log({ snapshot });
+        console.log('new post snapshot');
       },
       (error) => {
-        console.log({ error });
+        console.error({ error });
       },
       () => {
         // complete function
@@ -77,6 +75,7 @@ export default function BottomNav() {
           .ref('images')
           .child(file.name)
           .getDownloadURL()
+
           .then((url) => {
             // now post the newPost :)
             db.collection('posts').add({

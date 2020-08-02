@@ -7,7 +7,9 @@ const FeedArea = () => {
     <FeedContainer>
       {({ posts }) =>
         posts.length > 0
-          ? posts.map((post) => <Post id={post.id} {...post.post} />)
+          ? posts.map((post) => (
+              <Post key={post.id} id={post.id} {...post.post} />
+            ))
           : null
       }
     </FeedContainer>

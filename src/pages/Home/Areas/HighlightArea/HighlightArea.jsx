@@ -1,9 +1,13 @@
 import React from 'react';
-import InstagramEmbed from 'react-instagram-embed';
+// import InstagramEmbed from 'react-instagram-embed';
 
 const HighlightArea = () => {
-  return (
-    <InstagramEmbed
+  return <p>'Highlights';</p>;
+};
+
+export default HighlightArea;
+
+/* <InstagramEmbed
       url='https://www.instagram.com/p/B7ouFQHA-C0/'
       hideCaption={false}
       containerTagName='div'
@@ -13,8 +17,4 @@ const HighlightArea = () => {
       onSuccess={() => {}}
       onAfterRender={() => {}}
       onFailure={() => {}}
-    />
-  );
-};
-
-export default HighlightArea;
+    /> */
