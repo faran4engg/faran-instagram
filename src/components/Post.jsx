@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Post({ username, caption, imageUrl }) {
+export default function Post({ username, caption, imageUrl, timestamp }) {
   const classes = useStyles();
 
   return (
@@ -47,7 +47,7 @@ export default function Post({ username, caption, imageUrl }) {
             </IconButton>
           }
           title={username}
-          subheader='August 1, 2020'
+          subheader={new Date(timestamp?.seconds * 1000).toDateString()}
         />
         <CardMedia className={classes.media} image={imageUrl} />
         <CardContent>

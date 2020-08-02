@@ -5,9 +5,11 @@ const FeedContainer = ({ children }) => {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    db.collection('posts').onSnapshot((snapshot) => {
-      setPosts(snapshot.docs.map((doc) => doc.data()));
-    });
+    db.collection('posts')
+      .orderBy('timestamp', 'desc')
+      .onSnapshot((snapshot) => {
+        setPosts(snapshot.docs.map((doc) => doc.data()));
+      });
   }, []);
 
   return children({ posts });

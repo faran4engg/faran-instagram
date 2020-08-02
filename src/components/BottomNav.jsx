@@ -14,8 +14,10 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-import './BottomNav.css';
 import Container from '@material-ui/core/Container';
+import firebase from 'firebase';
+import { db, storage } from '../firebase/firebase-config';
+import './BottomNav.css';
 
 const useStyles = makeStyles({
   root: {
@@ -35,6 +37,7 @@ export default function BottomNav() {
   const classes = useStyles();
   const [value, setValue] = React.useState('home');
   const [open, setOpen] = React.useState(false);
+  const [caption, setCaption] = React.useState('das');
 
   const [imagePreviewUrl, setImagePreviewUrl] = React.useState('');
   const [file, setFile] = React.useState('');
@@ -58,6 +61,35 @@ export default function BottomNav() {
     e.preventDefault();
     // TODO: do something with -> this.state.file
     console.log('handle uploading-', file);
+
+    const newPost = storage.ref(`images/${file.name}`).put(file);
+    newPost.on(
+      'state_changed',
+      (snapshot) => {
+        console.log({ snapshot });
+      },
+      (error) => {
+        console.log({ error });
+      },
+      () => {
+        // complete function
+        storage
+          .ref('images')
+          .child(file.name)
+          .getDownloadURL()
+          .then((url) => {
+            // now post the newPost :)
+            db.collection('posts').add({
+              timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+              caption: caption,
+              imageUrl: url,
+              username: 'newPost-username',
+            });
+
+            handleClose();
+          });
+      }
+    );
   };
 
   const handleImageChange = (e) => {
@@ -133,6 +165,14 @@ export default function BottomNav() {
         <Container>
           <div className='file-upload-wrapper'>
             <form onSubmit={(e) => handleSubmit(e)}>
+              <div>
+                <input
+                  className='fileInput'
+                  type='text'
+                  value={caption}
+                  onChange={(e) => setCaption(e.target.value)}
+                />
+              </div>
               <input
                 className='fileInput'
                 type='file'
