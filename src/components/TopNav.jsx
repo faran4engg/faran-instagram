@@ -66,30 +66,17 @@ export default function TopNav() {
   const [user, setUser] = React.useState(null);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((authUser) => {
+    auth.onAuthStateChanged((authUser) => {
       if (authUser) {
         // user has loggedin
         console.log({ authUser });
         setUser(authUser);
-        if (authUser.displayName) {
-          // dont updte username
-        } else {
-          // if we create a new user
-          return authUser.updateProfile({
-            displayName: username,
-          });
-        }
       } else {
         // user has logged out
         setUser(null);
       }
     });
-
-    return () => {
-      // cleanup
-      unsubscribe();
-    };
-  }, [user, username]);
+  });
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -111,9 +98,14 @@ export default function TopNav() {
 
   const signup = () => {
     console.log('signup', { username, email, password });
+
     auth
       .createUserWithEmailAndPassword(email, password)
-
+      .then((authUser) => {
+        return authUser.user.updateProfile({
+          displayName: username,
+        });
+      })
       .catch((error) => {
         console.error(error.message);
         alert(error.message);
@@ -244,7 +236,11 @@ export default function TopNav() {
               </Badge>
             </IconButton>
             {user ? (
-              <IconButton edge='end' color='inherit' onClick={auth.signOut()}>
+              <IconButton
+                edge='end'
+                color='inherit'
+                onClick={() => auth.signOut()}
+              >
                 <ExitToAppIcon />
               </IconButton>
             ) : (
