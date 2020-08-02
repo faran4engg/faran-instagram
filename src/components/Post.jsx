@@ -31,6 +31,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Post({ id, username, caption, imageUrl, timestamp }) {
   const classes = useStyles();
+  const usernameFromLocalStorage = localStorage.getItem(
+    'usernameFromLocalStorage'
+  );
 
   return (
     <>
@@ -46,7 +49,7 @@ export default function Post({ id, username, caption, imageUrl, timestamp }) {
               <MoreVertIcon />
             </IconButton>
           }
-          title={username}
+          title={usernameFromLocalStorage}
           subheader={new Date(timestamp?.seconds * 1000).toDateString()}
         />
         <CardMedia className={classes.media} image={imageUrl} />
@@ -63,7 +66,7 @@ export default function Post({ id, username, caption, imageUrl, timestamp }) {
             </IconButton>
           </CardActions>
           <Typography variant='body2' color='textSecondary' component='p'>
-            <strong>{username}: </strong> {caption}
+            <strong>{usernameFromLocalStorage}: </strong> {caption}
           </Typography>
           <br />
           <Typography variant='subtitle2' display='block' gutterBottom>

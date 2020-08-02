@@ -60,6 +60,7 @@ export default function TopNav() {
   const classes = useStyles();
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const [open, setOpen] = React.useState(false);
+  const [openLogin, setOpenLogin] = React.useState(false);
   const [username, setUsername] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -70,6 +71,7 @@ export default function TopNav() {
       if (authUser) {
         // user has loggedin
         console.log({ authUser });
+        localStorage.setItem('usernameFromLocalStorage', authUser.displayName);
         setUser(authUser);
       } else {
         // user has logged out
@@ -105,6 +107,20 @@ export default function TopNav() {
         return authUser.user.updateProfile({
           displayName: username,
         });
+      })
+      .catch((error) => {
+        console.error(error.message);
+        alert(error.message);
+      });
+
+    handleClose();
+  };
+
+  const login = () => {
+    auth
+      .signInWithEmailAndPassword(email, password)
+      .then(() => {
+        setOpenLogin(false);
       })
       .catch((error) => {
         console.error(error.message);
@@ -203,6 +219,43 @@ export default function TopNav() {
     </Dialog>
   );
 
+  const loginDialog = (
+    <Dialog
+      open={openLogin}
+      onClose={() => setOpenLogin(false)}
+      aria-labelledby='form-dialog-title'
+    >
+      <DialogTitle id='form-dialog-title'>Signup</DialogTitle>
+      <DialogContent>
+        <TextField
+          autoFocus
+          margin='dense'
+          id='email'
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          label='Email Address'
+          type='email'
+          fullWidth
+        />
+        <TextField
+          autoFocus
+          margin='dense'
+          id='password'
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          label='Password'
+          type='password'
+          fullWidth
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={login} color='primary'>
+          Login
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+
   return (
     <div className={classes.grow}>
       <AppBar position='static' color='default'>
@@ -244,9 +297,23 @@ export default function TopNav() {
                 <ExitToAppIcon />
               </IconButton>
             ) : (
-              <IconButton edge='end' color='inherit' onClick={handleClickOpen}>
-                <AccountCircle />
-              </IconButton>
+              <>
+                <IconButton
+                  edge='end'
+                  color='inherit'
+                  onClick={() => setOpenLogin(true)}
+                >
+                  Login
+                </IconButton>
+
+                <IconButton
+                  edge='end'
+                  color='inherit'
+                  onClick={handleClickOpen}
+                >
+                  <AccountCircle />
+                </IconButton>
+              </>
             )}
           </div>
           <div className={classes.sectionMobile}>
@@ -264,6 +331,7 @@ export default function TopNav() {
       </AppBar>
       {renderMobileMenu}
       {formDialog}
+      {loginDialog}
     </div>
   );
 }
